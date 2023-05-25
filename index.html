@@ -6,6 +6,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
+	<script async="true" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=AM_CHTML"> </script>
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" />
 	</noscript>
@@ -26,24 +27,15 @@
 				<ul class="actions">
 					<li><a href="https://github.com/sajukhakurel074/BreezySlam" class="button">Project Link</a></li>
 				</ul>
+				<ul class="actions">
+					<li><a href="Mid_Term_Report (1).pdf" class="button">Project Report</a></li>
+				</ul>
 				</p>
 
 			</div>
+
 			<div class="video">
 				<video controls src="SLAM.mp4" width="700" height="700"></video>
-			</div>
-		</section>
-
-		<section
-			class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
-			<div class="content">
-				<p class="major">
-
-				</p>
-
-			</div>
-			<div class="image">
-				<img src="348389197_2445614715613611_3806244563333345333_n.png" alt="" />
 			</div>
 		</section>
 
@@ -53,13 +45,114 @@
 			id="first">
 			<div class="content">
 				<p class="major">
+					Going
+					through various developments, the mobile robots have come to the phase of Autonomous
+					Mobile Robots. The general problem of mobile robot navigation was summarized into three
+					questions: “Where am I?,” “Where am I going?,” and “How should I get there?”. In this project we
+					tried to figure out these solutions to these questions by implemeting SLAM algorithms using ROS.<br>
+					The question of ”Where am I?” addresses the localization problem of autonomous robot
+					control. Localization involves the task of identifying the robot position with respect to its
+					environment. In a typical robot localization scenario, the robot uses the sensor information and
+					already available environment map. This approach takes in noisy sensor data that give the
+					measured pose of the robot in the environment and applies various filtering approaches to find
+					the estimate of the actual pose of the robot and solve the localization problem. Bayesian
+					filtering can be employed as a powerful technique to address this problem. However,
+					the constraint of already knowing the map weighs heavy on the this approach to the problem. The
+					other
+					approach overcomes this constraint in the sense it builds the map and localizes
+					itself in it simultaneously and hence, called SLAM. The classical age of SLAM(1986-2004)
+					witnessed the probabilistic approaches to SLAM among which were EKF and maximum
+					likelihood estimation. The later period, algorithmic-analysis age (2004-2015), was much
+					involved with the study of SLAM and its fundamental properties like observability, convergence and
+					consistency itself.
 
 				</p>
-
 			</div>
 
 		</section>
 
+		<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in"
+			id="first">
+			<div class="content">
+				<p class="major">
+					SLAM as we have devised in this project requires laser-scan data coming from the laser
+					range finder sensor or LIDAR attached to the mobile robot. The laser-scan data corresponds
+					to the environment of the mobile robot and is used to develop the occupancy grid map of the
+					environment and localize the mobile robot in it. In practical applications, the laser data is
+					received form LIDAR of the mobile robot and the SLAM processing is done resulting in the
+					occupancy grid map. The obtained occupancy grid map gives the location of obstacles in the
+					environment and that is used by path-planning algorithms to find the appropriate path from
+					the robot’s current position to the specified goal position. However, as for our project we
+					require the laser-data and generate the occupancy grid map. So we selected Robot Operating
+					System(ROS) as our platform to simulate the mobile robot in an environment and gather
+					the laser scan data and also to visualize the output i.e. occupancy grid map and the particle
+					position in it. For the world simulation we use a 3D simulation package called Gazebo and
+					readily available turtlebot 3 packages as our environment. The real time visualization of
+					output is done using the package Rviz.</p>
+			</div>
+			<div class="image">
+				<img src="349215980_1170110626997759_6890551536589465033_n.png" alt="" />
+			</div>
+
+
+		</section>
+
+
+		<!--Third-->
+
+		<!--Fourth-->
+		<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in"
+			id="first">
+
+			<div class="content">
+				<h1>Particle Filter</h1>
+				<p class="major">
+					Particle Filter uses a set of particles to represent the posterior distribution of a model in a
+					process and filter out the particles as the number of observations increase, leaving out the
+					particles with the highest probability of survival. In our project we used the particle filter for
+					calculating the possible location of the robot in the given map, observing the laser scan data
+					and filtering out the particles by calculating its importance weight.<br>
+					At the beginning a list of particles is defined. Each particle has the necessary attributes
+					like 2D position, orientation (θ) weight and their own individual map. The position of particles are
+					then updated using the Hill Climbing algorithm, which uses
+					random normal distribution and returns the best estimated position of the particles respective
+					to scan data. After that the weight of each particle was calculated using the sensor model. The
+					calculated weight of the particles are then normalized and re-sampled.
+				</p>
+				<div class="cmath">
+					<h3>
+						<b>
+							<u>Algorithm 1 Particle Filter</u>
+						</b>
+					</h3>
+					<b>Input</b>: `X_t` list of particles, Wt weight of particles, M Number of particles<br>
+					<b>Output</b>: `(X^’)_t` list of new generation of particles<br>
+					1: <b>Procedure</b> PARTICLE FILTER <br>
+					2: `(X^’)_t` = `(X)_t` = `\phi` <br>
+					3: for n = 1 to M do <br>
+					4: `X[n]_t` = HILL CLIMBING(x, m, z) <br>
+					5: `W[n]_t` = SENSOR MODEL(z, x, m) <br>
+					6: end for <br>
+					7: RESAMPLER (`X[n]_t`, `W[n]_t`)<br>
+					8: end procedure <br>
+				</div>
+				<br>
+
+				<p class="major">
+					Tiny SLAM uses the hill climbing approach in order to search for the best possible position
+					that matches the current laser scan data. We use a random hill climbing approach where, the
+					algorithm iterates max number of times and returns
+					the position for which the sensor model gives the least value. The robot poses are searched
+					randomly by using a normal distribution. The parameters σxy, σθ can be used to control the
+					variance of the search. Higher value of these parameters lead to a much larger search space.
+				</p>
+			</div>
+		</section>
+
+
+		<div class="image">
+			<img src="346162399_787821669647261_1425928815930260611_n.png" alt="" />
+		</div>
 	</div>
 
 	<!-- Scripts -->
